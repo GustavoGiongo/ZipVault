@@ -1,8 +1,8 @@
 package api
 
 import (
-	"ZipVault/api/download"
-	"ZipVault/api/health"
+	"ZipVault/internal/api/download"
+	"ZipVault/internal/api/health"
 	"github.com/gin-gonic/gin"
 	_ "net/http"
 
@@ -12,6 +12,6 @@ import (
 func StartServer() {
 	router := gin.Default()
 	router.GET("/health", health.HealthHandler)
-	router.POST("/download", download.DownloadHandler)
+	router.GET("/download", download.DownloadHandler)
 	router.Run(":8080")
 }

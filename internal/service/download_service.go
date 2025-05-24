@@ -1,16 +1,28 @@
 package service
 
 import (
+	"ZipVault/internal/domain"
 	"ZipVault/internal/dto"
-	"fmt"
+	"ZipVault/internal/repository"
 	"strings"
 )
 
-func DownloadService(d *dto.DownloadRequest) (bool, error) {
-	d.Name = Sanitize(d.Name)
-	fmt.Println(d.Name)
-	return true, nil
+type DownloadService struct {
+	repo domain.DownloadRepository
+}
 
+func (s DownloadService) HandleDownload(d *dto.DownloadRequest) bool {
+	d.Name = Sanitize(d.Name)
+	d.Date = Sanitize(d.Date)
+	_, err := s.repo.FindByNameAndDate(d.Name, d.Date)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func NewDownloadService(repo *repository.DownloadRepositoryImpl) *DownloadService {
+	return &DownloadService{repo: repo}
 }
 
 func Sanitize(s string) string {

@@ -12,6 +12,6 @@ import (
 func StartServer() {
 	router := gin.Default()
 	router.GET("/health", health.HealthHandler)
-	router.GET("/download", download.DownloadHandler)
+	router.POST("/download", download.DownloadHandler)
 	router.Run(":8080")
 }

@@ -11,12 +11,16 @@ import (
 
 func main() {
 
-	db, err := sql.Open("mysql", "user:senha@tcp(localhost:3306)/database")
+	db, err := sql.Open("mysql", "root:root@tcp(mysql:3306)/folders")
 	if err != nil {
 		log.Println("Error connecting to database:", err)
 	}
-	defer db.Close()
+	if err := db.Ping(); err != nil {
+		log.Fatal("MySQL didn't respond", err)
+	}
 
+	log.Println("MySql connection is open!")
+	defer db.Close()
 	downloadRepo := mysql.NewMySQLDownloadRepository(db)
 	downLoadService := app.NewDownloadService(downloadRepo)
 	downloadHandler := http.NewDownloadHandler(downLoadService)

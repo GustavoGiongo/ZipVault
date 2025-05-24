@@ -5,4 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN go build -o main ./cmd/zipvault
-CMD ["./main"]
+
+RUN chmod +x /app/wait-for-it.sh
+
+ENTRYPOINT ["/app/wait-for-it.sh", "mysql:3306", "--", "./main"]

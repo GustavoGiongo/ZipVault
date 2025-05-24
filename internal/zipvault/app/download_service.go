@@ -10,7 +10,7 @@ type DownloadService struct {
 	repo download.DownloadRepository
 }
 
-func (s DownloadService) HandleDownload(d *dto.DownloadRequest) (bool, error) {
+func (s DownloadService) SearchFolderName(d *dto.DownloadRequest) (bool, error) {
 	d.Name = Sanitize(d.Name)
 	d.Date = Sanitize(d.Date)
 	var b, err = s.repo.FindByNameAndDate(d.Name, d.Date)

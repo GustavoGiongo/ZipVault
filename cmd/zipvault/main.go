@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ZipVault/api"
+	"ZipVault/internal/api"
 	"fmt"
 )
 

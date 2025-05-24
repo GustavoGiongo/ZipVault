@@ -3,7 +3,6 @@ package http
 import (
 	"ZipVault/internal/zipvault/app"
 	"ZipVault/internal/zipvault/dto/dto"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -18,14 +17,19 @@ func NewDownloadHandler(svc *app.DownloadService) *DownloadHandler {
 
 func (dh *DownloadHandler) HandleDownload(c *gin.Context) {
 	var req dto.DownloadRequest
-	fmt.Println(req)
-	FolderName, err := dh.Service.SearchFolderName(&req)
+	if err := c.ShouldBindQuery(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Parameters"})
+		return
+	}
+	location, err := dh.Service.SearchFileLocation(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		panic(err)
 	}
-	if FolderName {
-		c.JSON(http.StatusOK, gin.H{"message:": "File was Found"})
+	if location != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"File location:": location,
+		})
 	}
 	c.JSON(http.StatusNoContent, gin.H{"message:": "File was not Found"})
 }

@@ -3,20 +3,20 @@ package app
 import (
 	download "ZipVault/internal/zipvault/domain/download"
 	"ZipVault/internal/zipvault/dto/dto"
+	"strings"
 )
 
 type DownloadService struct {
 	repo download.DownloadRepository
 }
 
-func (s DownloadService) SearchFileLocation(d *dto.DownloadRequest) (string, error) {
-	//d.Name = Sanitize(d.Name)
-	//d.Date = Sanitize(d.Date)
-	var fileLocation, err = s.repo.FindFileLocationByNameAndDate(d.Name, d.Date)
+func (s DownloadService) SearchFileRecords(d *dto.ListingRequest) ([]dto.FileRecord, error) {
+	strings.ToLower(d.Name)
+	var records, err = s.repo.FindFileRecordsByNameOrDate(d.Name, "", "")
 	if err != nil {
-		return fileLocation, err
+		return records, err
 	}
-	return fileLocation, nil
+	return records, nil
 }
 
 func NewDownloadService(repo download.DownloadRepository) *DownloadService {
@@ -25,5 +25,4 @@ func NewDownloadService(repo download.DownloadRepository) *DownloadService {
 
 //func Sanitize(s string) string {
 //	return strings.ReplaceAll(s, " ", "")
-//
 //}

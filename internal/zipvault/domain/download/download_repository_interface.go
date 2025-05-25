@@ -1,5 +1,7 @@
-package downloadusuario
+package downloadInterface
+
+import "ZipVault/internal/zipvault/dto/dto"
 
 type DownloadRepository interface {
-	FindFileLocationByNameAndDate(name, date string) (string, error)
+	FindFileRecordsByNameOrDate(name, startDate, endDate string) ([]dto.FileRecord, error)
 }

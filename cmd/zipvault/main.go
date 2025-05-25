@@ -5,13 +5,20 @@ import (
 	"ZipVault/internal/zipvault/app"
 	"ZipVault/internal/zipvault/infra/mysql/mysql"
 	"database/sql"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"log"
+	"os"
 )
 
 func main() {
 
-	db, err := sql.Open("mysql", "root:root@tcp(mysql:3306)/folders")
+	host, port, user, password, name := initDb()
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, name)
+	log.Println("Conectando ao banco com:", dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Println("Error connecting to database:", err)
 	}
@@ -27,6 +34,17 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/health", http.HealthHandler)
-	router.GET("/download", downloadHandler.HandleDownload)
+	router.GET("/list", downloadHandler.HandleListing)
 	router.Run(":8080")
+}
+
+func initDb() (string, string, string, string, string) {
+	_ = godotenv.Load()
+
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	name := os.Getenv("DB_NAME")
+	return host, port, user, password, name
 }

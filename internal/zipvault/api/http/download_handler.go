@@ -23,7 +23,7 @@ type FilteredFileResponse struct {
 	Name     string `json:"name"`
 	Date     string `json:"date"`
 	Folder   string `json:"folder"`
-	FullPath string `json:"full_path"`
+	FullPath string `json:"fullPath"`
 }
 
 func (dh *DownloadHandler) HandleListing(c *gin.Context) {
@@ -45,15 +45,24 @@ func (dh *DownloadHandler) HandleListing(c *gin.Context) {
 		return
 	}
 
-	base := os.Getenv("BASE_PATH")
+	filteredRecordsResponse := filterRecords(fileRecords)
 
+	c.JSON(http.StatusOK, gin.H{
+		"files": filteredRecordsResponse,
+	})
+
+	log.Println("Filtered file list returned")
+}
+
+func filterRecords(fileRecords []dto.FileRecord) []FilteredFileResponse {
+	base := os.Getenv("BASE_PATH")
 	var (
-		mu                      sync.Mutex
 		wg                      sync.WaitGroup
 		filteredRecordsResponse []FilteredFileResponse
 	)
 
-	//TODO check why it's returning only two files and not three
+	resultChan := make(chan FilteredFileResponse)
+
 	for _, fileRecord := range fileRecords {
 		wg.Add(1)
 		go func(record dto.FileRecord) {
@@ -62,25 +71,22 @@ func (dh *DownloadHandler) HandleListing(c *gin.Context) {
 			fullPath := filepath.Join(base, record.Folder, record.Name)
 
 			if _, err := os.Stat(fullPath); err == nil {
-				filtered := FilteredFileResponse{
+				resultChan <- FilteredFileResponse{
 					Name:     record.Name,
 					Date:     record.Date,
 					Folder:   record.Folder,
 					FullPath: fullPath,
 				}
-				mu.Lock()
-				filteredRecordsResponse = append(filteredRecordsResponse, filtered)
-				mu.Unlock()
 			}
 		}(fileRecord)
 	}
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
 
-	wg.Wait()
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Files found",
-		"files":   filteredRecordsResponse,
-	})
-
-	log.Println("Filtered file list returned")
+	for result := range resultChan {
+		filteredRecordsResponse = append(filteredRecordsResponse, result)
+	}
+	return filteredRecordsResponse
 }

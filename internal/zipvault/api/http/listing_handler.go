@@ -11,12 +11,12 @@ import (
 	"sync"
 )
 
-type DownloadHandler struct {
-	Service *app.DownloadService
+type ListHandler struct {
+	Service *app.ListingService
 }
 
-func NewDownloadHandler(svc *app.DownloadService) *DownloadHandler {
-	return &DownloadHandler{Service: svc}
+func NewListingHandler(svc *app.ListingService) *ListHandler {
+	return &ListHandler{Service: svc}
 }
 
 type FilteredFileResponse struct {
@@ -26,7 +26,7 @@ type FilteredFileResponse struct {
 	FullPath string `json:"fullPath"`
 }
 
-func (dh *DownloadHandler) HandleListing(c *gin.Context) {
+func (dh *ListHandler) HandleListing(c *gin.Context) {
 	var req dto.ListingRequest
 
 	if err := c.ShouldBindQuery(&req); err != nil {

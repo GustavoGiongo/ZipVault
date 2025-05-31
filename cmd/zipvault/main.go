@@ -28,13 +28,13 @@ func main() {
 
 	log.Println("MySql connection is open!")
 	defer db.Close()
-	downloadRepo := mysql.NewMySQLDownloadRepository(db)
-	downLoadService := app.NewDownloadService(downloadRepo)
-	downloadHandler := http.NewDownloadHandler(downLoadService)
+	repository := mysql.NewMySQLRepository(db)
+	listingService := app.NewListingService(repository)
+	listHandler := http.NewListingHandler(listingService)
 
 	router := gin.Default()
 	router.GET("/health", http.HealthHandler)
-	router.GET("/list", downloadHandler.HandleListing)
+	router.GET("/list", listHandler.HandleListing)
 	router.Run(":8080")
 }
 

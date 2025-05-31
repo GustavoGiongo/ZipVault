@@ -7,15 +7,15 @@ import (
 	"strings"
 )
 
-type DownloadRepositoryImpl struct {
+type RepositoryImpl struct {
 	Db *sql.DB
 }
 
-func NewMySQLDownloadRepository(db *sql.DB) *DownloadRepositoryImpl {
-	return &DownloadRepositoryImpl{Db: db}
+func NewMySQLRepository(db *sql.DB) *RepositoryImpl {
+	return &RepositoryImpl{Db: db}
 }
 
-func (r *DownloadRepositoryImpl) FindFileRecordsByNameOrDate(name, startDate, endDate string) ([]dto.FileRecord, error) {
+func (r *RepositoryImpl) FindFileRecordsByNameOrDate(name, startDate, endDate string) ([]dto.FileRecord, error) {
 	var (
 		query      = "SELECT name,date,folder FROM files"
 		conditions []string

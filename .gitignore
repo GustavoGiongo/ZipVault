@@ -2,3 +2,6 @@
 /.idea/
 /ZipVault.iml
 /cmd/zipvault/a.out
+/data/
+/.dockerignore
+/.env

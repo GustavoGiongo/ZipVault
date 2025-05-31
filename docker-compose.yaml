@@ -8,6 +8,15 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
+    environment:
+      BASE_PATH: /app
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: folders
+    volumes:
+      - /home/gustavo-giongo/Pictures/Screenshots:/app/Pictures/Screenshots
     restart: always
 
   mysql:
@@ -19,5 +28,6 @@ services:
       MYSQL_DATABASE: folders
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+     # - ./data/mysql:/var/lib/mysql
     restart: always
 

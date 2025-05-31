@@ -1,7 +1,7 @@
-package downloadInterface
+package repositoryInterface
 
 import "ZipVault/internal/zipvault/dto/dto"
 
-type DownloadRepository interface {
+type Repository interface {
 	FindFileRecordsByNameOrDate(name, startDate, endDate string) ([]dto.FileRecord, error)
 }
